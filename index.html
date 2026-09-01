@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Number Hunt</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Number Hunt">
+<meta name="theme-color" content="#0A0E1C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0E1C;
+    --card: #141B32;
+    --card2: #1B2444;
+    --border: #2C3766;
+    --white: #F3F6FF;
+    --gray: #8B93B8;
+    --blue: #5E8CFF;
+    --blue-hover: #7FA3FF;
+    --green: #2FE6A6;
+    --green-hover: #54EFBC;
+    --yellow: #FFB443;
+    --yellow-hover: #FFC46B;
+    --red: #FF5C7A;
+    --purple: #B57BFF;
+    --font: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'Consolas', 'Menlo', monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font);
+    min-height: 100%;
+    overscroll-behavior-y: contain;
+  }
+
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 24px 20px 40px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadein 0.18s ease; }
+
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+
+  h1.title {
+    font-size: 30px;
+    font-weight: 800;
+    text-align: center;
+    margin: 24px 0 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--gray);
+    font-size: 13px;
+    margin: 0 0 28px;
+  }
+
+  .mode-title {
+    font-size: 21px;
+    font-weight: 700;
+    text-align: center;
+    margin: 14px 0 4px;
+  }
+
+  .mode-sub {
+    text-align: center;
+    color: var(--gray);
+    font-size: 12.5px;
+    margin: 0 0 18px;
+  }
+
+  /* ---- Menu cards ---- */
+  .menu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .menu-card:active { background: var(--card2); }
+  .menu-card h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .menu-card p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 12.5px;
+  }
+  .menu-card.blue h3 { color: var(--blue); }
+  .menu-card.green h3 { color: var(--green); }
+  .menu-card.yellow h3 { color: var(--yellow); }
+
+  /* ---- Cards / panels ---- */
+  .panel {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 22px 20px;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .panel.solid-card {
+    background: var(--card);
+  }
+
+  .panel-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--blue);
+    margin: 0 0 16px;
+  }
+
+  .big-guess {
+    font-family: var(--mono);
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 4px;
+    margin: 4px 0 6px;
+  }
+
+  .caption {
+    color: var(--gray);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  /* ---- Digit boxes ---- */
+  .digit-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 6px 0 18px;
+  }
+
+  .digit-box {
+    width: 48px;
+    height: 56px;
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    color: #101632;
+    background: #EAF0FF;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    outline: none;
+    padding: 0;
+  }
+  .digit-box:focus { border-color: var(--blue); }
+  .digit-box.accent-green:focus { border-color: var(--green); }
+  .digit-box.accent-yellow:focus { border-color: var(--yellow); }
+  .digit-box.small { width: 40px; height: 48px; font-size: 20px; }
+
+  .btn {
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    padding: 13px 24px;
+    cursor: pointer;
+    color: #0A0E1C;
+    width: 100%;
+    transition: background 0.15s ease;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn.blue { background: var(--blue); }
+  .btn.blue:active { background: var(--blue-hover); }
+  .btn.green { background: var(--green); }
+  .btn.green:active { background: var(--green-hover); }
+
+  .btn.ghost {
+    background: var(--card2);
+    color: var(--white);
+    border: 1px solid var(--border);
+    margin-top: 14px;
+  }
+  .btn.ghost:active { background: var(--border); }
+
+  .feedback-line {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray);
+    min-height: 18px;
+    margin: 2px 0 16px;
+  }
+
+  /* ---- History table ---- */
+  .table-wrap {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .table-header, .table-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+  }
+  .table-header {
+    background: var(--card2);
+    padding: 10px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+  }
+  .table-header span { color: var(--blue); }
+  .table-header.green span { color: var(--green); }
+
+  .table-body {
+    max-height: 220px;
+    overflow-y: auto;
+    background: var(--card2);
+  }
+  .table-row {
+    padding: 8px 4px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .table-row:nth-child(even) { background: var(--bg); }
+  .table-empty {
+    text-align: center;
+    color: var(--border);
+    font-size: 12px;
+    padding: 18px 0;
+  }
+
+  /* ---- Race mode ---- */
+  .race-title { color: var(--purple); }
+
+  .race-status {
+    text-align: center;
+    color: var(--gray);
+    font-size: 11.5px;
+    margin-bottom: 4px;
+  }
+  .turn-label {
+    text-align: center;
+    font-weight: 700;
+    font-size: 17px;
+    margin: 4px 0 6px;
+  }
+  .turn-label.you { color: var(--blue); }
+  .turn-label.system { color: var(--green); }
+
+  .winner-banner {
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    min-height: 20px;
+    margin-bottom: 6px;
+  }
+
+  .error-line {
+    text-align: center;
+    color: var(--red);
+    font-size: 12px;
+    min-height: 16px;
+    margin: -6px 0 10px;
+  }
+
+  .fb-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 18px;
+  }
+  .fb-label { font-size: 12px; font-weight: 600; }
+  .fb-label.green { color: var(--green); }
+  .fb-label.yellow { color: var(--yellow); }
+
+  .race-logs {
+    display: flex;
+    gap: 10px;
+  }
+  @media (max-width: 420px) {
+    .race-logs { flex-direction: column; }
+  }
+  .race-log-col { flex: 1; min-width: 0; }
+  .race-log-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .race-log-title.blue { color: var(--blue); }
+  .race-log-title.green { color: var(--green); }
+  .race-table .table-header, .race-table .table-row {
+    grid-template-columns: 0.7fr 1fr 0.6fr 0.6fr;
+    font-size: 11px;
+  }
+  .race-table .table-body { max-height: 150px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ MENU ============ -->
+  <div class="screen active" id="screen-menu">
+    <h1 class="title">NUMBER HUNT</h1>
+    <p class="subtitle">Pick how you want to play</p>
+
+    <div class="menu-card blue" onclick="enterMode('you')">
+      <h3>You Guess My Number</h3>
+      <p>I pick a secret number, you try to crack it</p>
+    </div>
+    <div class="menu-card green" onclick="enterMode('system')">
+      <h3>I Guess Your Number</h3>
+      <p>Think of a number, I'll try to guess it</p>
+    </div>
+    <div class="menu-card yellow" onclick="enterMode('race')">
+      <h3>&#9889; Race Mode</h3>
+      <p>We both guess at the same time &mdash; fastest wins</p>
+    </div>
+  </div>
+
+  <!-- ============ MODE 1: YOU GUESS ============ -->
+  <div class="screen" id="screen-you">
+    <button class="back-btn" onclick="goToMenu()">&#9664; Menu</button>
+    <h2 class="mode-title">You Guess My Number</h2>
+    <p class="mode-sub">I'm thinking of a 3-digit number (digits 1-9, no repeats)</p>
+
+    <div class="panel">
+      <p class="panel-title" id="you-attempt-label">ATTEMPT #1</p>
+      <div class="digit-row" id="you-digits"></div>
+      <button class="btn blue" onclick="youSubmitGuess()">Submit Guess</button>
+    </div>
+
+    <p class="feedback-line" id="you-feedback"></p>
+
+    <p class="caption">GUESS HISTORY</p>
+    <div class="table-wrap">
+      <div class="table-header"><span>ATTEMPT</span><span>GUESS</span><span>CORRECT</span><span>WRONG</span></div>
+      <div class="table-body" id="you-history"><div class="table-empty">No guesses yet</div></div>
+    </div>
+
+    <button class="btn ghost" onclick="youNewGame()">&#8635; New Number</button>
+  </div>
+
+  <!-- ============ MODE 2: SYSTEM GUESSES ============ -->
+  <div class="screen" id="screen-system">
+    <button class="back-btn" onclick="goToMenu()">&#9664; Menu</button>
+    <h2 class="mode-title">I Guess Your Number</h2>
+    <p class="mode-sub">Think of a 3-digit number (digits 1-9, no repeats)</p>
+
+    <div class="panel solid-card">
+      <p class="caption">MY GUESS</p>
+      <p class="big-guess" id="sys-guess-display">427</p>
+      <p class="caption" id="sys-attempt-label" style="margin-top:2px;">ATTEMPT #1</p>
+    </div>
+
+    <div class="panel">
+      <p class="panel-title" style="color:var(--white);">Give Me Feedback</p>
+      <div class="fb-row">
+        <span class="fb-label green">Correct</span>
+        <div id="sys-correct-box"></div>
+        <span class="fb-label yellow" style="margin-left:10px;">Wrong</span>
+        <div id="sys-wrong-box"></div>
+      </div>
+      <button class="btn green" onclick="sysSubmitFeedback()">Submit Feedback</button>
+    </div>
+
+    <p class="feedback-line" id="sys-feedback"></p>
+
+    <p class="caption">GUESS HISTORY</p>
+    <div class="table-wrap">
+      <div class="table-header green"><span>ATTEMPT</span><span>GUESS</span><span>CORRECT</span><span>WRONG</span></div>
+      <div class="table-body" id="sys-history"><div class="table-empty">No guesses yet</div></div>
+    </div>
+
+    <button class="btn ghost" onclick="sysNewGame()">&#8635; New Game</button>
+  </div>
+
+  <!-- ============ MODE 3: RACE ============ -->
+  <div class="screen" id="screen-race">
+    <button class="back-btn" onclick="goToMenu()">&#9664; Menu</button>
+    <h2 class="mode-title race-title">&#9889; Race Mode</h2>
+    <p class="race-status" id="race-score">YOU: ATTEMPT #1 &nbsp;&nbsp; SYSTEM: ATTEMPT #1</p>
+    <p class="turn-label you" id="race-turn-label">YOUR TURN</p>
+    <p class="winner-banner" id="race-winner"></p>
+
+    <div class="panel solid-card" id="race-you-panel">
+      <p class="panel-title">Your Guess</p>
+      <div class="digit-row" id="race-you-digits"></div>
+      <button class="btn blue" onclick="raceYouSubmit()">Submit Guess</button>
+    </div>
+
+    <div class="panel solid-card hidden" id="race-sys-panel">
+      <p class="caption">MY GUESS</p>
+      <p class="big-guess" id="race-sys-guess-display" style="color:var(--green);">427</p>
+      <div class="fb-row">
+        <span class="fb-label green">Correct</span>
+        <div id="race-sys-correct-box"></div>
+        <span class="fb-label yellow" style="margin-left:10px;">Wrong</span>
+        <div id="race-sys-wrong-box"></div>
+      </div>
+      <button class="btn green" onclick="raceSysSubmit()">Submit Feedback</button>
+    </div>
+
+    <p class="error-line" id="race-error"></p>
+
+    <div class="race-logs">
+      <div class="race-log-col">
+        <p class="race-log-title blue">YOU</p>
+        <div class="table-wrap race-table">
+          <div class="table-header"><span>ATT</span><span>GUESS</span><span>C</span><span>W</span></div>
+          <div class="table-body" id="race-you-history"><div class="table-empty">&mdash;</div></div>
+        </div>
+      </div>
+      <div class="race-log-col">
+        <p class="race-log-title green">SYSTEM</p>
+        <div class="table-wrap race-table">
+          <div class="table-header green"><span>ATT</span><span>GUESS</span><span>C</span><span>W</span></div>
+          <div class="table-body" id="race-sys-history"><div class="table-empty">&mdash;</div></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn ghost" onclick="raceNewGame()">&#8635; New Race</button>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   SHARED ALGORITHM (ported 1:1 from the desktop Python version)
+   ============================================================ */
+
+const DIGITS = "123456789";
+
+function permutations(str, k) {
+  const results = [];
+  function helper(current, remaining) {
+    if (current.length === k) { results.push(current.join("")); return; }
+    for (let i = 0; i < remaining.length; i++) {
+      helper(current.concat(remaining[i]), remaining.slice(0, i).concat(remaining.slice(i + 1)));
+    }
+  }
+  helper([], str.split(""));
+  return results;
+}
+
+const ALL_CANDIDATES = permutations(DIGITS, 3);
+
+function calcFeedback(guess, candidate) {
+  let correct = 0;
+  for (let i = 0; i < 3; i++) if (guess[i] === candidate[i]) correct++;
+  let shared = 0;
+  for (const d of guess) if (candidate.includes(d)) shared++;
+  return [correct, shared - correct];
+}
+
+function filterCandidates(pool, guess, correct, wrong) {
+  return pool.filter(c => {
+    if (c === guess) return false;
+    const [fc, fw] = calcFeedback(guess, c);
+    return fc === correct && fw === wrong;
+  });
+}
+
+function pickNextGuess(pool) {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function validGuess(text) {
+  return /^[1-9]{3}$/.test(text) && new Set(text.split("")).size === 3;
+}
+
+/* ============================================================
+   DIGIT BOX WIDGET
+   Creates `count` single-character inputs inside `container`.
+   Typing auto-advances; backspace steps back; arrows move between
+   boxes; Enter calls onEnter. Returns {get, clear, focusFirst}.
+   ============================================================ */
+
+function makeDigitBoxes(container, count, allowed, accentClass, onEnter, small) {
+  container.innerHTML = "";
+  const boxes = [];
+
+  for (let i = 0; i < count; i++) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.inputMode = "numeric";
+    input.pattern = "[0-9]*";
+    input.maxLength = 1;
+    input.className = "digit-box" + (accentClass ? " " + accentClass : "") + (small ? " small" : "");
+    input.autocomplete = "off";
+    container.appendChild(input);
+    boxes.push(input);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (i > 0) boxes[i - 1].focus();
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (i < count - 1) boxes[i + 1].focus();
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (onEnter) onEnter();
+        return;
+      }
+      if (e.key === "Backspace") {
+        if (input.value === "" && i > 0) {
+          e.preventDefault();
+          boxes[i - 1].focus();
+          boxes[i - 1].value = "";
+        }
+        return;
+      }
+    });
+
+    input.addEventListener("input", () => {
+      let v = input.value;
+      // keep only the last typed allowed character (handles mobile IME quirks)
+      let ch = v.length ? v[v.length - 1] : "";
+      if (ch && allowed.includes(ch)) {
+        input.value = ch;
+        if (i < count - 1) boxes[i + 1].focus();
+      } else {
+        input.value = "";
+      }
+    });
+
+    input.addEventListener("focus", () => input.select());
+  }
+
+  return {
+    get: () => boxes.map(b => b.value).join(""),
+    clear: () => boxes.forEach(b => (b.value = "")),
+    focusFirst: () => boxes[0] && boxes[0].focus(),
+  };
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function goToMenu() {
+  showScreen("screen-menu");
+}
+
+function enterMode(mode) {
+  if (mode === "you") { youNewGame(); showScreen("screen-you"); }
+  if (mode === "system") { sysNewGame(); showScreen("screen-system"); }
+  if (mode === "race") { raceNewGame(); showScreen("screen-race"); }
+}
+
+/* ============================================================
+   HISTORY TABLE HELPER
+   ============================================================ */
+
+function tableAddRow(bodyEl, values, emptyMsgCleared) {
+  if (!emptyMsgCleared.done) {
+    bodyEl.innerHTML = "";
+    emptyMsgCleared.done = true;
+  }
+  const row = document.createElement("div");
+  row.className = "table-row";
+  row.innerHTML = values.map(v => `<span>${v}</span>`).join("");
+  bodyEl.appendChild(row);
+  bodyEl.scrollTop = bodyEl.scrollHeight;
+}
+
+function tableClear(bodyEl, emptyMsgCleared, emptyText) {
+  bodyEl.innerHTML = `<div class="table-empty">${emptyText}</div>`;
+  emptyMsgCleared.done = false;
+}
+
+/* ============================================================
+   MODE 1: YOU GUESS MY NUMBER
+   ============================================================ */
+
+let youSecret = null;
+let youAttempt = 1;
+const youHistoryState = { done: false };
+
+const youDigitsEl = document.getElementById("you-digits");
+let youBoxes = makeDigitBoxes(youDigitsEl, 3, "123456789", "", () => youSubmitGuess());
+
+function youNewGame() {
+  youSecret = ALL_CANDIDATES[Math.floor(Math.random() * ALL_CANDIDATES.length)];
+  youAttempt = 1;
+  document.getElementById("you-attempt-label").textContent = "ATTEMPT #1";
+  document.getElementById("you-attempt-label").style.color = "var(--blue)";
+  youBoxes.clear();
+  document.getElementById("you-feedback").textContent = "";
+  tableClear(document.getElementById("you-history"), youHistoryState, "No guesses yet");
+  document.querySelector("#screen-you .btn.blue").disabled = false;
+  youBoxes.focusFirst();
+}
+
+function youSubmitGuess() {
+  const guess = youBoxes.get();
+  const fb = document.getElementById("you-feedback");
+
+  if (!validGuess(guess)) {
+    fb.textContent = "Fill all 3 boxes with different digits (1-9).";
+    fb.style.color = "var(--red)";
+    return;
+  }
+
+  const [correct, wrong] = calcFeedback(guess, youSecret);
+  tableAddRow(document.getElementById("you-history"), [youAttempt, guess, correct, wrong], youHistoryState);
+
+  if (correct === 3) {
+    fb.textContent = `You cracked it in ${youAttempt} attempts! It was ${guess}`;
+    fb.style.color = "var(--green)";
+    document.getElementById("you-attempt-label").textContent = "SOLVED!";
+    document.getElementById("you-attempt-label").style.color = "var(--green)";
+    document.querySelector("#screen-you .btn.blue").disabled = true;
+    return;
+  }
+
+  fb.textContent = `${correct} correct, ${wrong} wrong`;
+  fb.style.color = "var(--gray)";
+  youAttempt++;
+  document.getElementById("you-attempt-label").textContent = `ATTEMPT #${youAttempt}`;
+  youBoxes.clear();
+  youBoxes.focusFirst();
+}
+
+/* ============================================================
+   MODE 2: I GUESS YOUR NUMBER
+   ============================================================ */
+
+let sysCandidates = ALL_CANDIDATES.slice();
+let sysCurrentGuess = "427";
+let sysAttempt = 1;
+const sysHistoryState = { done: false };
+
+const sysCorrectBoxes = makeDigitBoxes(document.getElementById("sys-correct-box"), 1, "0123", "accent-green", () => sysSubmitFeedback(), true);
+const sysWrongBoxes = makeDigitBoxes(document.getElementById("sys-wrong-box"), 1, "0123", "accent-yellow", () => sysSubmitFeedback(), true);
+
+function sysUpdateGuess(newGuess) {
+  sysCurrentGuess = newGuess;
+  sysAttempt++;
+  document.getElementById("sys-guess-display").textContent = sysCurrentGuess;
+  document.getElementById("sys-attempt-label").textContent = `ATTEMPT #${sysAttempt}`;
+  sysCorrectBoxes.clear();
+  sysWrongBoxes.clear();
+  sysCorrectBoxes.focusFirst();
+}
+
+function sysSubmitFeedback() {
+  const fb = document.getElementById("sys-feedback");
+  const correctRaw = sysCorrectBoxes.get();
+  const wrongRaw = sysWrongBoxes.get();
+
+  if (!/^[0-9]$/.test(correctRaw) || !/^[0-9]$/.test(wrongRaw)) {
+    fb.textContent = "Fill in both boxes.";
+    return;
+  }
+
+  const correct = parseInt(correctRaw, 10);
+  const wrong = parseInt(wrongRaw, 10);
+
+  if (correct + wrong > 3 || correct > 3 || wrong > 3) {
+    fb.textContent = "That feedback isn't possible for a 3-digit number.";
+    return;
+  }
+
+  const won = correct === 3;
+  let newPool = sysCandidates;
+  if (!won) {
+    newPool = filterCandidates(sysCandidates, sysCurrentGuess, correct, wrong);
+    if (newPool.length === 0) {
+      fb.textContent = "No number fits that feedback \u2014 double check what you entered.";
+      return;
+    }
+  }
+
+  tableAddRow(document.getElementById("sys-history"), [sysAttempt, sysCurrentGuess, correct, wrong], sysHistoryState);
+
+  if (won) {
+    fb.textContent = `Solved it! Your number is ${sysCurrentGuess}`;
+    document.getElementById("sys-attempt-label").textContent = "SOLVED!";
+    document.getElementById("sys-attempt-label").style.color = "var(--green)";
+    document.querySelector("#screen-system .btn.green").disabled = true;
+    return;
+  }
+
+  sysCandidates = newPool;
+  const nextGuess = pickNextGuess(sysCandidates);
+  fb.textContent = `${correct} correct, ${wrong} wrong \u2014 ${sysCandidates.length} possibilities left`;
+  sysUpdateGuess(nextGuess);
+}
+
+function sysNewGame() {
+  sysCandidates = ALL_CANDIDATES.slice();
+  sysCurrentGuess = pickNextGuess(sysCandidates);
+  sysAttempt = 1;
+  document.getElementById("sys-guess-display").textContent = sysCurrentGuess;
+  document.getElementById("sys-attempt-label").textContent = "ATTEMPT #1";
+  document.getElementById("sys-attempt-label").style.color = "var(--gray)";
+  sysCorrectBoxes.clear();
+  sysWrongBoxes.clear();
+  document.getElementById("sys-feedback").textContent = "";
+  tableClear(document.getElementById("sys-history"), sysHistoryState, "No guesses yet");
+  document.querySelector("#screen-system .btn.green").disabled = false;
+  sysCorrectBoxes.focusFirst();
+}
+
+/* ============================================================
+   MODE 3: RACE MODE
+   ============================================================ */
+
+let raceSecret = null;
+let raceCandidates = ALL_CANDIDATES.slice();
+let raceCurrentGuess = "427";
+let raceTurn = "you";
+let youRaceAttempt = 1;
+let sysRaceAttempt = 1;
+let raceOver = false;
+const raceYouHistoryState = { done: false };
+const raceSysHistoryState = { done: false };
+
+const raceYouBoxes = makeDigitBoxes(document.getElementById("race-you-digits"), 3, "123456789", "", () => raceYouSubmit());
+const raceSysCorrectBoxes = makeDigitBoxes(document.getElementById("race-sys-correct-box"), 1, "0123", "accent-green", () => raceSysSubmit(), true);
+const raceSysWrongBoxes = makeDigitBoxes(document.getElementById("race-sys-wrong-box"), 1, "0123", "accent-yellow", () => raceSysSubmit(), true);
+
+function raceUpdateTurnUI() {
+  document.getElementById("race-score").textContent =
+    `YOU: ATTEMPT #${youRaceAttempt} \u00a0\u00a0 SYSTEM: ATTEMPT #${sysRaceAttempt}`;
+
+  const turnLabel = document.getElementById("race-turn-label");
+  const youPanel = document.getElementById("race-you-panel");
+  const sysPanel = document.getElementById("race-sys-panel");
+
+  if (raceTurn === "you") {
+    turnLabel.textContent = "YOUR TURN";
+    turnLabel.className = "turn-label you";
+    youPanel.classList.remove("hidden");
+    sysPanel.classList.add("hidden");
+    raceYouBoxes.focusFirst();
+  } else {
+    turnLabel.textContent = "SYSTEM'S TURN";
+    turnLabel.className = "turn-label system";
+    document.getElementById("race-sys-guess-display").textContent = raceCurrentGuess;
+    sysPanel.classList.remove("hidden");
+    youPanel.classList.add("hidden");
+    raceSysCorrectBoxes.focusFirst();
+  }
+}
+
+function raceNewGame() {
+  raceSecret = ALL_CANDIDATES[Math.floor(Math.random() * ALL_CANDIDATES.length)];
+  raceCandidates = ALL_CANDIDATES.slice();
+  raceCurrentGuess = pickNextGuess(raceCandidates);
+  raceTurn = "you";
+  youRaceAttempt = 1;
+  sysRaceAttempt = 1;
+  raceOver = false;
+
+  document.getElementById("race-winner").textContent = "";
+  document.getElementById("race-error").textContent = "";
+  raceYouBoxes.clear();
+  raceSysCorrectBoxes.clear();
+  raceSysWrongBoxes.clear();
+  tableClear(document.getElementById("race-you-history"), raceYouHistoryState, "\u2014");
+  tableClear(document.getElementById("race-sys-history"), raceSysHistoryState, "\u2014");
+  document.querySelector("#race-you-panel .btn").disabled = false;
+  document.querySelector("#race-sys-panel .btn").disabled = false;
+
+  raceUpdateTurnUI();
+}
+
+function raceDeclareWinner(text, color) {
+  raceOver = true;
+  const banner = document.getElementById("race-winner");
+  banner.textContent = text;
+  banner.style.color = color;
+  document.querySelector("#race-you-panel .btn").disabled = true;
+  document.querySelector("#race-sys-panel .btn").disabled = true;
+}
+
+function raceYouSubmit() {
+  if (raceOver || raceTurn !== "you") return;
+
+  const guess = raceYouBoxes.get();
+  const errEl = document.getElementById("race-error");
+
+  if (!validGuess(guess)) {
+    errEl.textContent = "Fill all 3 boxes with different digits (1-9).";
+    return;
+  }
+  errEl.textContent = "";
+
+  const [correct, wrong] = calcFeedback(guess, raceSecret);
+  tableAddRow(document.getElementById("race-you-history"), [youRaceAttempt, guess, correct, wrong], raceYouHistoryState);
+
+  if (correct === 3) {
+    raceDeclareWinner(`YOU WIN! You guessed it in ${youRaceAttempt} attempts`, "var(--blue)");
+    return;
+  }
+
+  youRaceAttempt++;
+  raceYouBoxes.clear();
+  raceTurn = "system";
+  raceUpdateTurnUI();
+}
+
+function raceSysSubmit() {
+  if (raceOver || raceTurn !== "system") return;
+
+  const errEl = document.getElementById("race-error");
+  const correctRaw = raceSysCorrectBoxes.get();
+  const wrongRaw = raceSysWrongBoxes.get();
+
+  if (!/^[0-9]$/.test(correctRaw) || !/^[0-9]$/.test(wrongRaw)) {
+    errEl.textContent = "Fill in both correct/wrong boxes.";
+    return;
+  }
+
+  const correct = parseInt(correctRaw, 10);
+  const wrong = parseInt(wrongRaw, 10);
+
+  if (correct + wrong > 3 || correct > 3 || wrong > 3) {
+    errEl.textContent = "That feedback isn't possible for a 3-digit number.";
+    return;
+  }
+
+  const sysWon = correct === 3;
+  let newPool = raceCandidates;
+  if (!sysWon) {
+    newPool = filterCandidates(raceCandidates, raceCurrentGuess, correct, wrong);
+    if (newPool.length === 0) {
+      errEl.textContent = "No number fits that feedback \u2014 double check what you entered.";
+      return;
+    }
+  }
+  errEl.textContent = "";
+
+  tableAddRow(document.getElementById("race-sys-history"), [sysRaceAttempt, raceCurrentGuess, correct, wrong], raceSysHistoryState);
+
+  if (sysWon) {
+    raceDeclareWinner(`SYSTEM WINS! It guessed your number in ${sysRaceAttempt} attempts`, "var(--green)");
+    return;
+  }
+
+  raceCandidates = newPool;
+  raceCurrentGuess = pickNextGuess(raceCandidates);
+  sysRaceAttempt++;
+  raceSysCorrectBoxes.clear();
+  raceSysWrongBoxes.clear();
+  raceTurn = "you";
+  raceUpdateTurnUI();
+}
+</script>
+</body>
+</html>
