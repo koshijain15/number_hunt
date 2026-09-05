@@ -200,6 +200,7 @@
     transition: background 0.15s ease;
   }
   .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   .btn.blue { background: var(--blue); }
   .btn.blue:active { background: var(--blue-hover); }
   .btn.green { background: var(--green); }
@@ -329,19 +330,516 @@
   .race-table .table-body { max-height: 150px; }
 
   .hidden { display: none !important; }
+
+  /* ---- Splash screen ---- */
+  .splash-wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .splash-art { width: 180px; height: 180px; margin-bottom: 8px; }
+  .splash-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 6px 0 6px;
+  }
+  .splash-sub {
+    color: var(--gray);
+    font-size: 13.5px;
+    margin: 0 0 32px;
+    max-width: 280px;
+  }
+  .splash-btn { width: 220px; }
+
+  /* ---- Hamburger / stats drawer ---- */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .hamburger-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--white);
+    font-size: 18px;
+    padding: 0;
+  }
+  .hamburger-btn:active { background: var(--border); }
+
+  #stats-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 40;
+  }
+  #stats-overlay.open { opacity: 1; pointer-events: auto; }
+
+  #stats-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    max-width: 78vw;
+    background: var(--card2);
+    border-right: 1px solid var(--border);
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    z-index: 41;
+    padding: 22px 20px;
+  }
+  #stats-drawer.open { transform: translateX(0); }
+
+  .stats-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .stats-drawer-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .stats-close-btn {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .stat-label {
+    color: var(--gray);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+  }
+
+  /* ---- Digit-count selector ---- */
+  .digit-select-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .digit-select-btn {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 0;
+    color: var(--gray);
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .digit-select-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #0A0E1C;
+  }
+  .digit-count-tag {
+    display: inline-block;
+    color: var(--gray);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+  }
+
+  /* ---- Login screen ---- */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .login-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0 0 6px;
+  }
+  .login-sub {
+    color: var(--gray);
+    font-size: 13px;
+    margin: 0 0 26px;
+    max-width: 280px;
+  }
+  .username-input {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 600;
+    padding: 14px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    background: #EAF0FF;
+    color: #101632;
+    margin-bottom: 14px;
+    outline: none;
+  }
+  .username-input:focus { border-color: var(--blue); }
+  .login-btn-wrap { width: 100%; max-width: 280px; }
+
+  /* ---- Splash (image) ---- */
+  .splash-image {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    display: block;
+  }
+
+  /* ---- Digit-count screen (standalone) ---- */
+  .digit-option-row {
+    display: flex;
+    gap: 14px;
+    margin: 22px 0;
+  }
+  .digit-option-card {
+    flex: 1;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 0;
+    text-align: center;
+    cursor: pointer;
+  }
+  .digit-option-card.selected {
+    border-color: var(--blue);
+    background: var(--card2);
+  }
+  .digit-option-num {
+    font-family: var(--mono);
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--gray);
+  }
+  .digit-option-card.selected .digit-option-num { color: var(--blue); }
+  .digit-option-label {
+    color: var(--gray);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin-top: 4px;
+  }
+
+  .menu-digit-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .menu-digit-tag {
+    color: var(--gray);
+    font-size: 12.5px;
+  }
+  .menu-digit-change {
+    color: var(--blue);
+    font-size: 12.5px;
+    font-weight: 700;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .stats-username {
+    font-size: 12.5px;
+    color: var(--gray);
+    margin-bottom: 16px;
+  }
+  .stats-username b { color: var(--white); }
+
+  /* ---- Right drawer (Rankings / Help) ---- */
+  #right-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 40;
+  }
+  #right-overlay.open { opacity: 1; pointer-events: auto; }
+
+  #right-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    max-width: 82vw;
+    background: var(--card2);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.22s ease;
+    z-index: 41;
+    padding: 22px 20px;
+    overflow-y: auto;
+  }
+  #right-drawer.open { transform: translateX(0); }
+
+  .right-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 18px 0 16px;
+  }
+  .tab-btn {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 9px 0;
+    color: var(--gray);
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: #17102b;
+  }
+
+  .rank-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-num {
+    width: 26px;
+    color: var(--gray);
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+  .rank-name {
+    flex: 1;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 8px;
+  }
+  .rank-name.me { color: var(--blue); }
+  .rank-score {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gray);
+    text-align: right;
+  }
+  .rank-empty {
+    color: var(--gray);
+    font-size: 12.5px;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .help-section h4 {
+    font-size: 13px;
+    margin: 18px 0 6px;
+    color: var(--purple);
+  }
+  .help-section h4:first-child { margin-top: 0; }
+  .help-section p {
+    font-size: 12.5px;
+    color: var(--gray);
+    line-height: 1.5;
+    margin: 0 0 4px;
+  }
+  .help-section b { color: var(--white); }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 4px;
+  }
 </style>
 </head>
 <body>
+
+<div id="stats-overlay" onclick="closeStats()"></div>
+<div id="stats-drawer">
+  <div class="stats-drawer-header">
+    <span class="stats-drawer-title">Statistics</span>
+    <button class="stats-close-btn" onclick="closeStats()">&#10005;</button>
+  </div>
+  <p class="stats-username">Logged in as <b id="stats-username">&mdash;</b></p>
+  <div class="stat-card">
+    <div class="stat-value" id="stat-played">0</div>
+    <div class="stat-label">GAMES PLAYED</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="stat-won">0</div>
+    <div class="stat-label">GAMES WON</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="stat-rate">0%</div>
+    <div class="stat-label">WIN RATE</div>
+  </div>
+  <button class="btn ghost" onclick="resetStats()">Reset Stats</button>
+  <button class="btn ghost" onclick="switchUser()">Switch User</button>
+</div>
+
+<div id="right-overlay" onclick="closeRightDrawer()"></div>
+<div id="right-drawer">
+  <div class="stats-drawer-header">
+    <span class="stats-drawer-title">Rankings &amp; Help</span>
+    <button class="stats-close-btn" onclick="closeRightDrawer()">&#10005;</button>
+  </div>
+
+  <div class="right-tabs">
+    <button class="tab-btn active" id="tab-rankings" onclick="showRightTab('rankings')">RANKINGS</button>
+    <button class="tab-btn" id="tab-help" onclick="showRightTab('help')">HELP</button>
+  </div>
+
+  <div id="rankings-panel">
+    <div id="rankings-list"><p class="rank-empty">Loading...</p></div>
+  </div>
+
+  <div id="help-panel" class="hidden">
+    <div class="help-section">
+      <h4>HOW SCORING WORKS</h4>
+      <p>Every guess gets scored against the secret number: <b>C (Correct)</b> is how many digits are in exactly the right position. <b>W (Wrong)</b> is how many digits exist in the number but in the wrong position. Neither counts digits that aren't in the secret at all.</p>
+      <p>Example: if the secret is <b>1234</b> and you guess <b>1325</b>, digit "1" is correct-position (C), digits "3" and "2" are in the number but wrong position (W), and "5" doesn't appear at all.</p>
+    </div>
+    <div class="help-section">
+      <h4>FIND AI'S NUMBER</h4>
+      <p>The AI picks a secret number. Type your guess into the boxes and submit &mdash; you'll see C/W feedback and your guess gets logged in the table below. Keep narrowing it down until C equals the number of digits.</p>
+    </div>
+    <div class="help-section">
+      <h4>I GUESS YOUR NUMBER</h4>
+      <p>Think of your own secret number (don't tell me!). I'll guess, and you tell me the C/W feedback using the small digit boxes. I use your feedback to narrow down the possibilities each round.</p>
+    </div>
+    <div class="help-section">
+      <h4>RACE MODE</h4>
+      <p>You and the AI each try to guess a number &mdash; you guess the AI's number, then score the AI's guess against a number you're implicitly playing against. Turns alternate. Whoever reaches full marks (C = number of digits) first wins.</p>
+    </div>
+    <div class="help-section">
+      <h4>PLAY A FRIEND ONLINE</h4>
+      <p>Create a room to get a 4-letter code, or join a friend's code. Both of you privately set a secret number, then guess each other's at your own pace &mdash; no turn order. First to crack it wins.</p>
+    </div>
+    <div class="help-section">
+      <h4>USING THE DIGIT BOXES</h4>
+      <p>Tap a box and type &mdash; it auto-advances to the next box. <b>Backspace</b> steps back. <b>Left/Right arrows</b> move between boxes without erasing. <b>Enter</b> submits from any box.</p>
+    </div>
+    <div class="help-section">
+      <h4>STATS &amp; RANKINGS</h4>
+      <p>The left menu (&#9776;) shows your personal games played/won. This panel's Rankings tab shows the global leaderboard across everyone who plays &mdash; sorted by games won.</p>
+    </div>
+  </div>
+</div>
+
 <div id="app">
 
+  <!-- ============ LOGIN ============ -->
+  <div class="screen active" id="screen-login">
+    <div class="login-wrap">
+      <h1 class="login-title">NUMBER HUNT</h1>
+      <p class="login-sub">Create an account or log in to track your stats and play with friends.</p>
+      <input class="username-input" id="login-username" maxlength="16" placeholder="Username" autocomplete="off">
+      <input class="username-input" id="login-password" type="password" placeholder="Password" autocomplete="off">
+      <div class="login-btn-wrap">
+        <button class="btn blue" id="login-submit-btn" onclick="submitAuth()">Create Account</button>
+      </div>
+      <p class="error-line" id="login-error"></p>
+      <button class="link-btn" id="login-toggle-btn" onclick="toggleLoginMode()">Already have an account? Log in</button>
+    </div>
+  </div>
+
+  <!-- ============ SPLASH ============ -->
+  <div class="screen" id="screen-splash">
+    <div class="splash-wrap">
+      <img class="splash-image" src="splash.jpg" alt="Number Hunt Brain Game">
+      <p class="splash-sub">Crack the code, race a friend, or see how many tries it takes the AI to find yours.</p>
+      <button class="btn blue splash-btn" onclick="goToDigitsScreen()">Tap to Start</button>
+    </div>
+  </div>
+
+  <!-- ============ DIGIT COUNT ============ -->
+  <div class="screen" id="screen-digits">
+    <button class="back-btn" onclick="showScreen('screen-splash')">&#9664; Back</button>
+    <h1 class="title" style="font-size:24px;">HOW MANY DIGITS?</h1>
+    <p class="subtitle">Pick the length of the secret number</p>
+
+    <div class="digit-option-row">
+      <div class="digit-option-card selected" id="digit-option-3" onclick="setNumDigits(3)">
+        <div class="digit-option-num">3</div>
+        <div class="digit-option-label">DIGITS</div>
+      </div>
+      <div class="digit-option-card" id="digit-option-4" onclick="setNumDigits(4)">
+        <div class="digit-option-num">4</div>
+        <div class="digit-option-label">DIGITS</div>
+      </div>
+    </div>
+
+    <button class="btn blue" onclick="confirmDigitsAndContinue()">Continue</button>
+  </div>
+
   <!-- ============ MENU ============ -->
-  <div class="screen active" id="screen-menu">
+  <div class="screen" id="screen-menu">
+    <div class="top-bar">
+      <button class="hamburger-btn" onclick="openStats()" aria-label="Statistics">&#9776;</button>
+      <button class="hamburger-btn" onclick="openRightDrawer()" aria-label="Rankings and Help">&#127942;</button>
+    </div>
     <h1 class="title">NUMBER HUNT</h1>
     <p class="subtitle">Pick how you want to play</p>
 
+    <div class="menu-digit-row">
+      <span class="menu-digit-tag" id="menu-digit-tag">Playing with 3 digits</span>
+      <button class="menu-digit-change" onclick="goToDigitsScreen()">Change</button>
+    </div>
+
     <div class="menu-card blue" onclick="enterMode('you')">
-      <h3>You Guess My Number</h3>
-      <p>I pick a secret number, you try to crack it</p>
+      <h3>Find AI's Number</h3>
+      <p>The AI picks a secret number, you try to crack it</p>
     </div>
     <div class="menu-card green" onclick="enterMode('system')">
       <h3>I Guess Your Number</h3>
@@ -351,13 +849,17 @@
       <h3>&#9889; Race Mode</h3>
       <p>We both guess at the same time &mdash; fastest wins</p>
     </div>
+    <div class="menu-card" style="border-color: var(--purple);" onclick="orGoToMenu()">
+      <h3 style="color: var(--purple);">&#127760; Play a Friend Online</h3>
+      <p>Create or join a room and race a friend from anywhere</p>
+    </div>
   </div>
 
   <!-- ============ MODE 1: YOU GUESS ============ -->
   <div class="screen" id="screen-you">
     <button class="back-btn" onclick="goToMenu()">&#9664; Menu</button>
     <h2 class="mode-title">You Guess My Number</h2>
-    <p class="mode-sub">I'm thinking of a 3-digit number (digits 1-9, no repeats)</p>
+    <p class="mode-sub" id="you-subtitle">I'm thinking of a 3-digit number (digits 1-9, no repeats)</p>
 
     <div class="panel">
       <p class="panel-title" id="you-attempt-label">ATTEMPT #1</p>
@@ -380,7 +882,7 @@
   <div class="screen" id="screen-system">
     <button class="back-btn" onclick="goToMenu()">&#9664; Menu</button>
     <h2 class="mode-title">I Guess Your Number</h2>
-    <p class="mode-sub">Think of a 3-digit number (digits 1-9, no repeats)</p>
+    <p class="mode-sub" id="sys-subtitle">Think of a 3-digit number (digits 1-9, no repeats)</p>
 
     <div class="panel solid-card">
       <p class="caption">MY GUESS</p>
@@ -458,14 +960,119 @@
     <button class="btn ghost" onclick="raceNewGame()">&#8635; New Race</button>
   </div>
 
+  <!-- ============ ONLINE: MENU ============ -->
+  <div class="screen" id="screen-online-menu">
+    <button class="back-btn" onclick="goToMenu()">&#9664; Menu</button>
+    <h2 class="mode-title" style="color: var(--purple);">&#127760; Play a Friend Online</h2>
+    <p class="mode-sub">Create a room and share the code, or join one</p>
+
+    <div class="panel">
+      <button class="btn blue" onclick="orCreateRoom()">Create a Room</button>
+    </div>
+
+    <div class="panel">
+      <p class="panel-title" style="color:var(--white);">Join a Room</p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-bottom:16px;">
+        <input id="or-join-code" maxlength="4" placeholder="CODE"
+          style="width:140px; text-align:center; text-transform:uppercase; font-family:var(--mono); font-size:20px; font-weight:700; padding:12px; border-radius:6px; border:2px solid var(--border); background:#EAF0FF; color:#101632;">
+      </div>
+      <button class="btn green" onclick="orJoinRoom()">Join</button>
+    </div>
+
+    <p class="error-line" id="or-menu-error"></p>
+  </div>
+
+  <!-- ============ ONLINE: LOBBY (waiting for opponent) ============ -->
+  <div class="screen" id="screen-online-lobby">
+    <button class="back-btn" onclick="orLeaveRoom()">&#9664; Leave</button>
+    <h2 class="mode-title" style="color: var(--purple);">Room Code</h2>
+    <div class="panel solid-card">
+      <p class="big-guess" id="or-room-code-display" style="letter-spacing:8px;">----</p>
+      <p class="caption">Share this code with your friend</p>
+    </div>
+    <p class="feedback-line" id="or-lobby-status">Waiting...</p>
+  </div>
+
+  <!-- ============ ONLINE: SET YOUR SECRET ============ -->
+  <div class="screen" id="screen-online-setup">
+    <button class="back-btn" onclick="orLeaveRoom()">&#9664; Leave</button>
+    <h2 class="mode-title" style="color: var(--purple);">Pick Your Secret Number</h2>
+    <p class="mode-sub" id="or-setup-subtitle">Your friend will try to guess this (digits 1-9, no repeats)</p>
+
+    <div id="or-setup-form" class="panel">
+      <div class="digit-row" id="or-secret-digits"></div>
+      <button class="btn blue" onclick="orSubmitSecret()">Lock In My Number</button>
+    </div>
+    <p class="error-line" id="or-setup-error"></p>
+    <p class="feedback-line hidden" id="or-setup-waiting"></p>
+  </div>
+
+  <!-- ============ ONLINE: LIVE RACE ============ -->
+  <div class="screen" id="screen-online-race">
+    <button class="back-btn" onclick="orLeaveRoom()">&#9664; Leave</button>
+    <h2 class="mode-title" style="color: var(--purple);">&#127760; Online Race</h2>
+    <p class="winner-banner" id="or-winner-banner"></p>
+
+    <div class="panel solid-card">
+      <p class="panel-title" id="or-my-attempt">ATTEMPT #1</p>
+      <div class="digit-row" id="or-guess-digits"></div>
+      <button class="btn blue" onclick="orSubmitGuess()">Submit Guess</button>
+    </div>
+    <p class="error-line" id="or-race-error"></p>
+
+    <div class="race-logs">
+      <div class="race-log-col">
+        <p class="race-log-title blue">YOU</p>
+        <div class="table-wrap race-table">
+          <div class="table-header"><span>ATT</span><span>GUESS</span><span>C</span><span>W</span></div>
+          <div class="table-body" id="or-my-history"><div class="table-empty">&mdash;</div></div>
+        </div>
+      </div>
+      <div class="race-log-col">
+        <p class="race-log-title green">FRIEND</p>
+        <div class="table-wrap race-table">
+          <div class="table-header green"><span>ATT</span><span>GUESS</span><span>C</span><span>W</span></div>
+          <div class="table-body" id="or-opp-history"><div class="table-empty">&mdash;</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<!-- ==== Firebase (for Login and Online Race Mode) ====
+     1. Create a free project at https://console.firebase.google.com
+     2. Enable "Realtime Database" (test mode is fine to start)
+     3. Enable Authentication -> Sign-in method -> "Email/Password" provider
+        (usernames are stored internally as username@numberhunt.local \u2014
+        this gives real password security via Firebase without needing
+        a separate account system)
+     4. Project settings -> your web app -> copy the config object below
+-->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAj2ZoaYeJUaau0p_AHQTmjpYBIs7uZOXw",
+  authDomain: "numberhunt-9aad2.firebaseapp.com",
+  databaseURL: "https://numberhunt-9aad2-default-rtdb.firebaseio.com",
+  projectId: "numberhunt-9aad2",
+  storageBucket: "numberhunt-9aad2.firebasestorage.app",
+  messagingSenderId: "148472805672",
+  appId: "1:148472805672:web:7ef5b179c3d7f0cedb781d",
+  measurementId: "G-WK5HF3LR8V"
+};
+  firebase.initializeApp(firebaseConfig);
+</script>
 <script>
 /* ============================================================
    SHARED ALGORITHM (ported 1:1 from the desktop Python version)
+   Generalized to support 3 or 4 digit games.
    ============================================================ */
 
 const DIGITS = "123456789";
+let NUM_DIGITS = 3; // chosen on the menu screen; 3 or 4
 
 function permutations(str, k) {
   const results = [];
@@ -479,11 +1086,13 @@ function permutations(str, k) {
   return results;
 }
 
-const ALL_CANDIDATES = permutations(DIGITS, 3);
+function allCandidates(n) {
+  return permutations(DIGITS, n === undefined ? NUM_DIGITS : n);
+}
 
 function calcFeedback(guess, candidate) {
   let correct = 0;
-  for (let i = 0; i < 3; i++) if (guess[i] === candidate[i]) correct++;
+  for (let i = 0; i < guess.length; i++) if (guess[i] === candidate[i]) correct++;
   let shared = 0;
   for (const d of guess) if (candidate.includes(d)) shared++;
   return [correct, shared - correct];
@@ -501,9 +1110,240 @@ function pickNextGuess(pool) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function validGuess(text) {
-  return /^[1-9]{3}$/.test(text) && new Set(text.split("")).size === 3;
+function validGuess(text, n) {
+  const len = n === undefined ? NUM_DIGITS : n;
+  if (text.length !== len) return false;
+  if (!new RegExp(`^[1-9]{${len}}$`).test(text)) return false;
+  return new Set(text.split("")).size === len;
 }
+
+function feedbackAllowedChars(n) {
+  const len = n === undefined ? NUM_DIGITS : n;
+  let s = "";
+  for (let i = 0; i <= len; i++) s += i;
+  return s;
+}
+
+/* ============================================================
+   (Old on-device localStorage stats have been replaced \u2014 see the
+   Firebase-backed STATISTICS block further down, which syncs stats
+   per account and powers the global leaderboard.)
+   ============================================================ */
+
+/* ============================================================
+   STATISTICS (synced to Firebase per account, so they follow you
+   across devices and can power the global leaderboard).
+   "Won" counts human victories: solving "Find AI's Number", or
+   winning a Race (local or online). "I Guess Your Number" only
+   ever counts toward "played" \u2014 there's no human win condition
+   there, it's the algorithm demonstrating itself.
+   ============================================================ */
+
+function leaderboardRef(uid) {
+  return firebase.database().ref("leaderboard/" + uid);
+}
+
+async function recordGameResult(won) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const ref = leaderboardRef(user.uid);
+  const snap = await ref.once("value");
+  const current = snap.val() || { username: currentUsername, played: 0, won: 0 };
+  current.played = (current.played || 0) + 1;
+  if (won) current.won = (current.won || 0) + 1;
+  current.username = currentUsername;
+  await ref.set(current);
+
+  renderStats();
+}
+
+async function renderStats() {
+  const user = firebase.auth().currentUser;
+  document.getElementById("stats-username").textContent = currentUsername || "\u2014";
+
+  let played = 0, won = 0;
+  if (user) {
+    const snap = await leaderboardRef(user.uid).once("value");
+    const data = snap.val();
+    if (data) { played = data.played || 0; won = data.won || 0; }
+  }
+  const rate = played > 0 ? Math.round((won / played) * 100) : 0;
+  document.getElementById("stat-played").textContent = played;
+  document.getElementById("stat-won").textContent = won;
+  document.getElementById("stat-rate").textContent = rate + "%";
+}
+
+function openStats() {
+  renderStats();
+  document.getElementById("stats-drawer").classList.add("open");
+  document.getElementById("stats-overlay").classList.add("open");
+}
+
+function closeStats() {
+  document.getElementById("stats-drawer").classList.remove("open");
+  document.getElementById("stats-overlay").classList.remove("open");
+}
+
+async function resetStats() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  await leaderboardRef(user.uid).set({ username: currentUsername, played: 0, won: 0 });
+  renderStats();
+}
+
+/* ============================================================
+   RIGHT DRAWER: GLOBAL RANKINGS + HELP
+   ============================================================ */
+
+function openRightDrawer() {
+  document.getElementById("right-drawer").classList.add("open");
+  document.getElementById("right-overlay").classList.add("open");
+  loadRankings();
+}
+
+function closeRightDrawer() {
+  document.getElementById("right-drawer").classList.remove("open");
+  document.getElementById("right-overlay").classList.remove("open");
+}
+
+function showRightTab(tab) {
+  document.getElementById("tab-rankings").classList.toggle("active", tab === "rankings");
+  document.getElementById("tab-help").classList.toggle("active", tab === "help");
+  document.getElementById("rankings-panel").classList.toggle("hidden", tab !== "rankings");
+  document.getElementById("help-panel").classList.toggle("hidden", tab !== "help");
+  if (tab === "rankings") loadRankings();
+}
+
+async function loadRankings() {
+  const listEl = document.getElementById("rankings-list");
+  const snap = await firebase.database().ref("leaderboard").once("value");
+  const data = snap.val() || {};
+
+  const entries = Object.values(data)
+    .filter((e) => e && e.username)
+    .sort((a, b) => (b.won - a.won) || (b.played - a.played));
+
+  if (entries.length === 0) {
+    listEl.innerHTML = '<p class="rank-empty">No games played yet \u2014 be the first!</p>';
+    return;
+  }
+
+  listEl.innerHTML = entries
+    .slice(0, 30)
+    .map((e, i) => {
+      const isMe = e.username === currentUsername;
+      return `<div class="rank-row">
+        <span class="rank-num">#${i + 1}</span>
+        <span class="rank-name${isMe ? " me" : ""}">${e.username}</span>
+        <span class="rank-score">${e.won}W / ${e.played}P</span>
+      </div>`;
+    })
+    .join("");
+}
+
+/* ============================================================
+   LOGIN (real accounts via Firebase Authentication)
+
+   Usernames are mapped to a synthetic email (username@numberhunt.local)
+   so we can use Firebase's Email/Password auth \u2014 this means password
+   hashing and storage is handled by Firebase itself, not by us. We
+   never see or store a plaintext password ourselves.
+   ============================================================ */
+
+let currentUsername = null;
+let loginMode = "signup"; // "signup" or "login"
+
+function validUsername(name) {
+  return /^[A-Za-z0-9_]{3,16}$/.test(name);
+}
+
+function usernameToEmail(name) {
+  return name.toLowerCase() + "@numberhunt.local";
+}
+
+function toggleLoginMode() {
+  loginMode = loginMode === "signup" ? "login" : "signup";
+  document.getElementById("login-submit-btn").textContent = loginMode === "signup" ? "Create Account" : "Log In";
+  document.getElementById("login-toggle-btn").textContent =
+    loginMode === "signup" ? "Already have an account? Log in" : "New here? Create account";
+  document.getElementById("login-error").textContent = "";
+}
+
+function friendlyAuthError(e) {
+  const code = e && e.code ? e.code : "";
+  if (code.includes("email-already-in-use")) return "That username is taken \u2014 try logging in instead.";
+  if (code.includes("user-not-found")) return "No account with that username. Check spelling or create one.";
+  if (code.includes("wrong-password") || code.includes("invalid-credential")) return "Incorrect password.";
+  if (code.includes("weak-password")) return "Password must be at least 6 characters.";
+  if (code.includes("invalid-email")) return "That username contains characters that aren't allowed.";
+  if (code.includes("network-request-failed")) return "Network error \u2014 check your connection and try again.";
+  return "Something went wrong \u2014 try again.";
+}
+
+async function submitAuth() {
+  const errEl = document.getElementById("login-error");
+  const name = document.getElementById("login-username").value.trim();
+  const pass = document.getElementById("login-password").value;
+
+  if (!validUsername(name)) {
+    errEl.textContent = "3-16 characters: letters, numbers, underscore only.";
+    return;
+  }
+  if (pass.length < 6) {
+    errEl.textContent = "Password must be at least 6 characters.";
+    return;
+  }
+  errEl.textContent = "";
+
+  const email = usernameToEmail(name);
+
+  try {
+    if (loginMode === "signup") {
+      const cred = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+      await cred.user.updateProfile({ displayName: name });
+      await leaderboardRef(cred.user.uid).set({ username: name, played: 0, won: 0 });
+    } else {
+      await firebase.auth().signInWithEmailAndPassword(email, pass);
+    }
+  } catch (e) {
+    errEl.textContent = friendlyAuthError(e);
+    return;
+  }
+
+  onLoginSuccess();
+}
+
+function onLoginSuccess() {
+  const user = firebase.auth().currentUser;
+  currentUsername = (user && user.displayName) || (user && user.email ? user.email.split("@")[0] : "Player");
+  document.getElementById("login-username").value = "";
+  document.getElementById("login-password").value = "";
+  showScreen("screen-splash");
+}
+
+async function switchUser() {
+  await firebase.auth().signOut();
+  currentUsername = null;
+  closeStats();
+  document.getElementById("login-username").value = "";
+  document.getElementById("login-password").value = "";
+  document.getElementById("login-error").textContent = "";
+  loginMode = "login";
+  document.getElementById("login-submit-btn").textContent = "Log In";
+  document.getElementById("login-toggle-btn").textContent = "New here? Create account";
+  showScreen("screen-login");
+}
+
+// Restores an already-signed-in session on page load (Firebase persists
+// this locally on its own) so returning players skip straight to splash.
+firebase.auth().onAuthStateChanged((user) => {
+  if (user && document.getElementById("screen-login").classList.contains("active")) {
+    currentUsername = user.displayName || (user.email ? user.email.split("@")[0] : "Player");
+    showScreen("screen-splash");
+  }
+});
+
 
 /* ============================================================
    DIGIT BOX WIDGET
@@ -588,6 +1428,21 @@ function goToMenu() {
   showScreen("screen-menu");
 }
 
+function goToDigitsScreen() {
+  showScreen("screen-digits");
+}
+
+function setNumDigits(n) {
+  NUM_DIGITS = n;
+  document.getElementById("digit-option-3").classList.toggle("selected", n === 3);
+  document.getElementById("digit-option-4").classList.toggle("selected", n === 4);
+}
+
+function confirmDigitsAndContinue() {
+  document.getElementById("menu-digit-tag").textContent = `Playing with ${NUM_DIGITS} digits`;
+  showScreen("screen-menu");
+}
+
 function enterMode(mode) {
   if (mode === "you") { youNewGame(); showScreen("screen-you"); }
   if (mode === "system") { sysNewGame(); showScreen("screen-system"); }
@@ -621,17 +1476,24 @@ function tableClear(bodyEl, emptyMsgCleared, emptyText) {
 
 let youSecret = null;
 let youAttempt = 1;
+let youGameOver = false;
+let youBoxes = null;
 const youHistoryState = { done: false };
 
-const youDigitsEl = document.getElementById("you-digits");
-let youBoxes = makeDigitBoxes(youDigitsEl, 3, "123456789", "", () => youSubmitGuess());
-
 function youNewGame() {
-  youSecret = ALL_CANDIDATES[Math.floor(Math.random() * ALL_CANDIDATES.length)];
+  youSecret = pickNextGuess(allCandidates());
   youAttempt = 1;
+  youGameOver = false;
+
+  document.getElementById("you-subtitle").textContent =
+    `I'm thinking of a ${NUM_DIGITS}-digit number (digits 1-9, no repeats)`;
   document.getElementById("you-attempt-label").textContent = "ATTEMPT #1";
   document.getElementById("you-attempt-label").style.color = "var(--blue)";
-  youBoxes.clear();
+
+  youBoxes = makeDigitBoxes(
+    document.getElementById("you-digits"), NUM_DIGITS, DIGITS, "", () => youSubmitGuess()
+  );
+
   document.getElementById("you-feedback").textContent = "";
   tableClear(document.getElementById("you-history"), youHistoryState, "No guesses yet");
   document.querySelector("#screen-you .btn.blue").disabled = false;
@@ -639,11 +1501,13 @@ function youNewGame() {
 }
 
 function youSubmitGuess() {
+  if (youGameOver) return;
+
   const guess = youBoxes.get();
   const fb = document.getElementById("you-feedback");
 
   if (!validGuess(guess)) {
-    fb.textContent = "Fill all 3 boxes with different digits (1-9).";
+    fb.textContent = `Fill all ${NUM_DIGITS} boxes with different digits (1-9).`;
     fb.style.color = "var(--red)";
     return;
   }
@@ -651,12 +1515,14 @@ function youSubmitGuess() {
   const [correct, wrong] = calcFeedback(guess, youSecret);
   tableAddRow(document.getElementById("you-history"), [youAttempt, guess, correct, wrong], youHistoryState);
 
-  if (correct === 3) {
+  if (correct === NUM_DIGITS) {
     fb.textContent = `You cracked it in ${youAttempt} attempts! It was ${guess}`;
     fb.style.color = "var(--green)";
     document.getElementById("you-attempt-label").textContent = "SOLVED!";
     document.getElementById("you-attempt-label").style.color = "var(--green)";
     document.querySelector("#screen-you .btn.blue").disabled = true;
+    youGameOver = true;
+    recordGameResult(true);
     return;
   }
 
@@ -672,13 +1538,13 @@ function youSubmitGuess() {
    MODE 2: I GUESS YOUR NUMBER
    ============================================================ */
 
-let sysCandidates = ALL_CANDIDATES.slice();
-let sysCurrentGuess = "427";
+let sysCandidates = [];
+let sysCurrentGuess = "";
 let sysAttempt = 1;
+let sysGameOver = false;
+let sysCorrectBoxes = null;
+let sysWrongBoxes = null;
 const sysHistoryState = { done: false };
-
-const sysCorrectBoxes = makeDigitBoxes(document.getElementById("sys-correct-box"), 1, "0123", "accent-green", () => sysSubmitFeedback(), true);
-const sysWrongBoxes = makeDigitBoxes(document.getElementById("sys-wrong-box"), 1, "0123", "accent-yellow", () => sysSubmitFeedback(), true);
 
 function sysUpdateGuess(newGuess) {
   sysCurrentGuess = newGuess;
@@ -691,6 +1557,8 @@ function sysUpdateGuess(newGuess) {
 }
 
 function sysSubmitFeedback() {
+  if (sysGameOver) return;
+
   const fb = document.getElementById("sys-feedback");
   const correctRaw = sysCorrectBoxes.get();
   const wrongRaw = sysWrongBoxes.get();
@@ -703,12 +1571,12 @@ function sysSubmitFeedback() {
   const correct = parseInt(correctRaw, 10);
   const wrong = parseInt(wrongRaw, 10);
 
-  if (correct + wrong > 3 || correct > 3 || wrong > 3) {
-    fb.textContent = "That feedback isn't possible for a 3-digit number.";
+  if (correct + wrong > NUM_DIGITS || correct > NUM_DIGITS || wrong > NUM_DIGITS) {
+    fb.textContent = `That feedback isn't possible for a ${NUM_DIGITS}-digit number.`;
     return;
   }
 
-  const won = correct === 3;
+  const won = correct === NUM_DIGITS;
   let newPool = sysCandidates;
   if (!won) {
     newPool = filterCandidates(sysCandidates, sysCurrentGuess, correct, wrong);
@@ -725,6 +1593,8 @@ function sysSubmitFeedback() {
     document.getElementById("sys-attempt-label").textContent = "SOLVED!";
     document.getElementById("sys-attempt-label").style.color = "var(--green)";
     document.querySelector("#screen-system .btn.green").disabled = true;
+    sysGameOver = true;
+    recordGameResult(false);
     return;
   }
 
@@ -735,14 +1605,21 @@ function sysSubmitFeedback() {
 }
 
 function sysNewGame() {
-  sysCandidates = ALL_CANDIDATES.slice();
+  sysCandidates = allCandidates();
   sysCurrentGuess = pickNextGuess(sysCandidates);
   sysAttempt = 1;
+  sysGameOver = false;
+
+  document.getElementById("sys-subtitle").textContent =
+    `Think of a ${NUM_DIGITS}-digit number (digits 1-9, no repeats)`;
   document.getElementById("sys-guess-display").textContent = sysCurrentGuess;
   document.getElementById("sys-attempt-label").textContent = "ATTEMPT #1";
   document.getElementById("sys-attempt-label").style.color = "var(--gray)";
-  sysCorrectBoxes.clear();
-  sysWrongBoxes.clear();
+
+  const fbChars = feedbackAllowedChars();
+  sysCorrectBoxes = makeDigitBoxes(document.getElementById("sys-correct-box"), 1, fbChars, "accent-green", () => sysSubmitFeedback(), true);
+  sysWrongBoxes = makeDigitBoxes(document.getElementById("sys-wrong-box"), 1, fbChars, "accent-yellow", () => sysSubmitFeedback(), true);
+
   document.getElementById("sys-feedback").textContent = "";
   tableClear(document.getElementById("sys-history"), sysHistoryState, "No guesses yet");
   document.querySelector("#screen-system .btn.green").disabled = false;
@@ -754,18 +1631,17 @@ function sysNewGame() {
    ============================================================ */
 
 let raceSecret = null;
-let raceCandidates = ALL_CANDIDATES.slice();
-let raceCurrentGuess = "427";
+let raceCandidates = [];
+let raceCurrentGuess = "";
 let raceTurn = "you";
 let youRaceAttempt = 1;
 let sysRaceAttempt = 1;
 let raceOver = false;
+let raceYouBoxes = null;
+let raceSysCorrectBoxes = null;
+let raceSysWrongBoxes = null;
 const raceYouHistoryState = { done: false };
 const raceSysHistoryState = { done: false };
-
-const raceYouBoxes = makeDigitBoxes(document.getElementById("race-you-digits"), 3, "123456789", "", () => raceYouSubmit());
-const raceSysCorrectBoxes = makeDigitBoxes(document.getElementById("race-sys-correct-box"), 1, "0123", "accent-green", () => raceSysSubmit(), true);
-const raceSysWrongBoxes = makeDigitBoxes(document.getElementById("race-sys-wrong-box"), 1, "0123", "accent-yellow", () => raceSysSubmit(), true);
 
 function raceUpdateTurnUI() {
   document.getElementById("race-score").textContent =
@@ -792,19 +1668,21 @@ function raceUpdateTurnUI() {
 }
 
 function raceNewGame() {
-  raceSecret = ALL_CANDIDATES[Math.floor(Math.random() * ALL_CANDIDATES.length)];
-  raceCandidates = ALL_CANDIDATES.slice();
+  raceCandidates = allCandidates();
+  raceSecret = pickNextGuess(raceCandidates);
   raceCurrentGuess = pickNextGuess(raceCandidates);
   raceTurn = "you";
   youRaceAttempt = 1;
   sysRaceAttempt = 1;
   raceOver = false;
 
+  const fbChars = feedbackAllowedChars();
+  raceYouBoxes = makeDigitBoxes(document.getElementById("race-you-digits"), NUM_DIGITS, DIGITS, "", () => raceYouSubmit());
+  raceSysCorrectBoxes = makeDigitBoxes(document.getElementById("race-sys-correct-box"), 1, fbChars, "accent-green", () => raceSysSubmit(), true);
+  raceSysWrongBoxes = makeDigitBoxes(document.getElementById("race-sys-wrong-box"), 1, fbChars, "accent-yellow", () => raceSysSubmit(), true);
+
   document.getElementById("race-winner").textContent = "";
   document.getElementById("race-error").textContent = "";
-  raceYouBoxes.clear();
-  raceSysCorrectBoxes.clear();
-  raceSysWrongBoxes.clear();
   tableClear(document.getElementById("race-you-history"), raceYouHistoryState, "\u2014");
   tableClear(document.getElementById("race-sys-history"), raceSysHistoryState, "\u2014");
   document.querySelector("#race-you-panel .btn").disabled = false;
@@ -813,13 +1691,14 @@ function raceNewGame() {
   raceUpdateTurnUI();
 }
 
-function raceDeclareWinner(text, color) {
+function raceDeclareWinner(text, color, humanWon) {
   raceOver = true;
   const banner = document.getElementById("race-winner");
   banner.textContent = text;
   banner.style.color = color;
   document.querySelector("#race-you-panel .btn").disabled = true;
   document.querySelector("#race-sys-panel .btn").disabled = true;
+  recordGameResult(humanWon);
 }
 
 function raceYouSubmit() {
@@ -829,7 +1708,7 @@ function raceYouSubmit() {
   const errEl = document.getElementById("race-error");
 
   if (!validGuess(guess)) {
-    errEl.textContent = "Fill all 3 boxes with different digits (1-9).";
+    errEl.textContent = `Fill all ${NUM_DIGITS} boxes with different digits (1-9).`;
     return;
   }
   errEl.textContent = "";
@@ -837,8 +1716,8 @@ function raceYouSubmit() {
   const [correct, wrong] = calcFeedback(guess, raceSecret);
   tableAddRow(document.getElementById("race-you-history"), [youRaceAttempt, guess, correct, wrong], raceYouHistoryState);
 
-  if (correct === 3) {
-    raceDeclareWinner(`YOU WIN! You guessed it in ${youRaceAttempt} attempts`, "var(--blue)");
+  if (correct === NUM_DIGITS) {
+    raceDeclareWinner(`YOU WIN! You guessed it in ${youRaceAttempt} attempts`, "var(--blue)", true);
     return;
   }
 
@@ -863,12 +1742,12 @@ function raceSysSubmit() {
   const correct = parseInt(correctRaw, 10);
   const wrong = parseInt(wrongRaw, 10);
 
-  if (correct + wrong > 3 || correct > 3 || wrong > 3) {
-    errEl.textContent = "That feedback isn't possible for a 3-digit number.";
+  if (correct + wrong > NUM_DIGITS || correct > NUM_DIGITS || wrong > NUM_DIGITS) {
+    errEl.textContent = `That feedback isn't possible for a ${NUM_DIGITS}-digit number.`;
     return;
   }
 
-  const sysWon = correct === 3;
+  const sysWon = correct === NUM_DIGITS;
   let newPool = raceCandidates;
   if (!sysWon) {
     newPool = filterCandidates(raceCandidates, raceCurrentGuess, correct, wrong);
@@ -882,7 +1761,7 @@ function raceSysSubmit() {
   tableAddRow(document.getElementById("race-sys-history"), [sysRaceAttempt, raceCurrentGuess, correct, wrong], raceSysHistoryState);
 
   if (sysWon) {
-    raceDeclareWinner(`SYSTEM WINS! It guessed your number in ${sysRaceAttempt} attempts`, "var(--green)");
+    raceDeclareWinner(`SYSTEM WINS! It guessed your number in ${sysRaceAttempt} attempts`, "var(--green)", false);
     return;
   }
 
@@ -893,6 +1772,297 @@ function raceSysSubmit() {
   raceSysWrongBoxes.clear();
   raceTurn = "you";
   raceUpdateTurnUI();
+}
+
+/* ============================================================
+   ONLINE RACE MODE (play a friend over the internet via Firebase)
+
+   Data model at rooms/{code}:
+     status:   "waiting" | "setup" | "playing" | "finished"
+     players:  { A: true, B: true|false }
+     secrets:  { A: "123", B: "456" }
+     attempts: { A: 1, B: 1 }
+     history:  { A: [{attempt,guess,correct,wrong}], B: [...] }
+     winner:   null | "A" | "B"
+
+   Note: like the local Race Mode's manual feedback entry, this is
+   honesty-based, not cheat-proof \u2014 a technically curious friend could
+   inspect network traffic and see your secret early. Fine for casual
+   play; a hardened version would use Firebase Auth + per-user security
+   rules so each client only ever receives its own secret.
+   ============================================================ */
+
+let orRole = null;   // "A" (host) or "B" (guest)
+let orCode = null;
+let orNumDigits = 3;  // set by the room creator, adopted by whoever joins
+let orUnsubscribe = null;
+let orResultRecorded = false;
+
+const OR_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // no I/O, avoids confusion
+
+function orDb() {
+  return firebase.database();
+}
+
+function orRoomPath(code) {
+  return "rooms/" + code;
+}
+
+function orGoToMenu() {
+  document.getElementById("or-menu-error").textContent = "";
+  document.getElementById("or-join-code").value = "";
+  showScreen("screen-online-menu");
+}
+
+function orGenerateCode() {
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    code += OR_CODE_CHARS[Math.floor(Math.random() * OR_CODE_CHARS.length)];
+  }
+  return code;
+}
+
+async function orCreateRoom() {
+  const errEl = document.getElementById("or-menu-error");
+  errEl.textContent = "";
+
+  let code, exists = true;
+  for (let tries = 0; tries < 8 && exists; tries++) {
+    code = orGenerateCode();
+    const snap = await orDb().ref(orRoomPath(code)).once("value");
+    exists = snap.val() !== null;
+  }
+  if (exists) {
+    errEl.textContent = "Couldn't create a room right now \u2014 try again.";
+    return;
+  }
+
+  const numDigits = NUM_DIGITS;
+
+  await orDb().ref(orRoomPath(code)).set({
+    status: "waiting",
+    createdAt: Date.now(),
+    numDigits: numDigits,
+    players: { A: true, B: false },
+    secrets: { A: null, B: null },
+    attempts: { A: 1, B: 1 },
+    history: { A: [], B: [] },
+    winner: null,
+  });
+
+  orRole = "A";
+  orCode = code;
+  orNumDigits = numDigits;
+  orEnterLobby();
+}
+
+async function orJoinRoom() {
+  const errEl = document.getElementById("or-menu-error");
+  errEl.textContent = "";
+  const code = document.getElementById("or-join-code").value.trim().toUpperCase();
+
+  if (code.length !== 4) {
+    errEl.textContent = "Enter the 4-letter room code.";
+    return;
+  }
+
+  const snap = await orDb().ref(orRoomPath(code)).once("value");
+  const room = snap.val();
+  if (!room) {
+    errEl.textContent = "No room with that code.";
+    return;
+  }
+  if (room.players && room.players.B) {
+    errEl.textContent = "That room is already full.";
+    return;
+  }
+
+  await orDb().ref(orRoomPath(code) + "/players/B").set(true);
+  await orDb().ref(orRoomPath(code) + "/status").set("setup");
+
+  orRole = "B";
+  orCode = code;
+  orNumDigits = room.numDigits || 3;
+  orEnterLobby();
+}
+
+function orEnterLobby() {
+  document.getElementById("or-room-code-display").textContent = orCode;
+  orResultRecorded = false;
+  orEnsureBoxesBuilt();
+  showScreen("screen-online-lobby");
+  orSubscribe();
+}
+
+function orSubscribe() {
+  if (orUnsubscribe) orUnsubscribe();
+  const ref = orDb().ref(orRoomPath(orCode));
+  const cb = (snap) => orOnRoomUpdate(snap.val());
+  ref.on("value", cb);
+  orUnsubscribe = () => ref.off();
+}
+
+function orOpponentRole() {
+  return orRole === "A" ? "B" : "A";
+}
+
+function orOnRoomUpdate(room) {
+  if (!room) return;
+
+  if (room.status === "waiting") {
+    document.getElementById("or-lobby-status").textContent =
+      orRole === "A" ? "Waiting for your friend to join..." : "Joining...";
+    showScreen("screen-online-lobby");
+    return;
+  }
+
+  if (room.status === "setup") {
+    orShowSetup(room);
+    return;
+  }
+
+  orShowRace(room); // "playing" or "finished"
+}
+
+let orSecretBoxes = null;
+let orGuessBoxes = null;
+let orBoxesBuiltForCode = null;
+
+function orEnsureBoxesBuilt() {
+  if (orBoxesBuiltForCode === orCode) return;
+  document.getElementById("or-setup-subtitle").textContent =
+    `Your friend will try to guess this ${orNumDigits}-digit number (digits 1-9, no repeats)`;
+  orSecretBoxes = makeDigitBoxes(
+    document.getElementById("or-secret-digits"), orNumDigits, DIGITS, "", () => orSubmitSecret()
+  );
+  orGuessBoxes = makeDigitBoxes(
+    document.getElementById("or-guess-digits"), orNumDigits, DIGITS, "", () => orSubmitGuess()
+  );
+  orBoxesBuiltForCode = orCode;
+}
+
+function orShowSetup(room) {
+  showScreen("screen-online-setup");
+
+  const mySecretSet = room.secrets && room.secrets[orRole];
+  const oppSecretSet = room.secrets && room.secrets[orOpponentRole()];
+  const form = document.getElementById("or-setup-form");
+  const waiting = document.getElementById("or-setup-waiting");
+
+  if (mySecretSet) {
+    form.classList.add("hidden");
+    waiting.classList.remove("hidden");
+    waiting.textContent = oppSecretSet ? "Starting..." : "Waiting for your friend to set their number...";
+  } else {
+    form.classList.remove("hidden");
+    waiting.classList.add("hidden");
+    orSecretBoxes.focusFirst();
+  }
+}
+
+async function orSubmitSecret() {
+  const errEl = document.getElementById("or-setup-error");
+  const secret = orSecretBoxes.get();
+
+  if (!validGuess(secret, orNumDigits)) {
+    errEl.textContent = `Fill all ${orNumDigits} boxes with different digits (1-9).`;
+    return;
+  }
+  errEl.textContent = "";
+
+  await orDb().ref(orRoomPath(orCode) + "/secrets/" + orRole).set(secret);
+
+  const snap = await orDb().ref(orRoomPath(orCode) + "/secrets").once("value");
+  const secrets = snap.val() || {};
+  if (secrets.A && secrets.B) {
+    await orDb().ref(orRoomPath(orCode) + "/attempts").set({ A: 1, B: 1 });
+    await orDb().ref(orRoomPath(orCode) + "/status").set("playing");
+  }
+}
+
+const orMyHistoryState = { done: false };
+const orOppHistoryState = { done: false };
+
+function orShowRace(room) {
+  showScreen("screen-online-race");
+
+  const myHistory = (room.history && room.history[orRole]) || [];
+  const oppHistory = (room.history && room.history[orOpponentRole()]) || [];
+
+  tableClear(document.getElementById("or-my-history"), orMyHistoryState, "\u2014");
+  myHistory.forEach((row) =>
+    tableAddRow(document.getElementById("or-my-history"), [row.attempt, row.guess, row.correct, row.wrong], orMyHistoryState)
+  );
+
+  tableClear(document.getElementById("or-opp-history"), orOppHistoryState, "\u2014");
+  oppHistory.forEach((row) =>
+    tableAddRow(document.getElementById("or-opp-history"), [row.attempt, row.guess, row.correct, row.wrong], orOppHistoryState)
+  );
+
+  document.getElementById("or-my-attempt").textContent =
+    "ATTEMPT #" + (room.attempts ? room.attempts[orRole] : 1);
+
+  const banner = document.getElementById("or-winner-banner");
+  const guessBtn = document.querySelector("#screen-online-race .btn.blue");
+
+  if (room.status === "finished" && room.winner) {
+    const iWon = room.winner === orRole;
+    banner.textContent = iWon ? "YOU WIN!" : "Your friend guessed it first";
+    banner.style.color = iWon ? "var(--blue)" : "var(--gray)";
+    guessBtn.disabled = true;
+    if (!orResultRecorded) {
+      orResultRecorded = true;
+      recordGameResult(iWon);
+    }
+  } else {
+    banner.textContent = "";
+    guessBtn.disabled = false;
+    orGuessBoxes.focusFirst();
+  }
+}
+
+async function orSubmitGuess() {
+  const errEl = document.getElementById("or-race-error");
+  const guess = orGuessBoxes.get();
+
+  if (!validGuess(guess, orNumDigits)) {
+    errEl.textContent = `Fill all ${orNumDigits} boxes with different digits (1-9).`;
+    return;
+  }
+
+  const roomRef = orDb().ref(orRoomPath(orCode));
+  const snap = await roomRef.once("value");
+  const room = snap.val();
+  if (!room || room.status === "finished") return;
+
+  errEl.textContent = "";
+
+  const oppSecret = room.secrets[orOpponentRole()];
+  const [correct, wrong] = calcFeedback(guess, oppSecret);
+  const myAttempt = room.attempts[orRole];
+  const newHistory = [...((room.history && room.history[orRole]) || []), { attempt: myAttempt, guess, correct, wrong }];
+
+  await orDb().ref(orRoomPath(orCode) + "/history/" + orRole).set(newHistory);
+  await orDb().ref(orRoomPath(orCode) + "/attempts/" + orRole).set(myAttempt + 1);
+
+  if (correct === orNumDigits) {
+    await orDb().ref(orRoomPath(orCode) + "/winner").set(orRole);
+    await orDb().ref(orRoomPath(orCode) + "/status").set("finished");
+  }
+
+  orGuessBoxes.clear();
+}
+
+function orLeaveRoom() {
+  if (orUnsubscribe) orUnsubscribe();
+  orUnsubscribe = null;
+  orRole = null;
+  orCode = null;
+  orSecretBoxes = null;
+  orGuessBoxes = null;
+  orBoxesBuiltForCode = null;
+  orResultRecorded = false;
+  orGoToMenu();
 }
 </script>
 </body>
